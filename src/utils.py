@@ -1,7 +1,9 @@
 import oggm
+from oggm import cfg, utils, workflow
+
 from pathlib import Path
 import geopandas as gpd
-from oggm import cfg, utils, workflow
+import xarray as xr
 import logging
 
 logging.basicConfig(level=logging.INFO)
@@ -57,7 +59,13 @@ def filter_slope_area(gdf, slope_threshold=20, area_threshold=2):
     return filtered_gdf
 
 
-def process_glacier_directories(gdf, prepro_level=3, prepro_border=80, reset=True):
+def process_glacier_directories(
+    gdf,
+    prepro_level=3,
+    prepro_border=80,
+    reset=True,
+    base_url="https://cluster.klima.uni-bremen.de/~oggm/gdirs/oggm_v1.6/L3-L5_files/2023.3/elev_bands/W5E5/",
+):
     """
     Initializes glacier directories from preprocessed data.
     """
@@ -68,7 +76,7 @@ def process_glacier_directories(gdf, prepro_level=3, prepro_border=80, reset=Tru
             f"GDF length ({len(gdf)}) exceeds safety limit of {MAX_GLACIERS}."
         )
 
-    base_url = "https://cluster.klima.uni-bremen.de/~oggm/gdirs/oggm_v1.6/L3-L5_files/2023.3/centerlines/W5E5/"
+    base_url = base_url
 
     try:
         gdirs = workflow.init_glacier_directories(
@@ -85,6 +93,16 @@ def process_glacier_directories(gdf, prepro_level=3, prepro_border=80, reset=Tru
         raise
 
 
-def get_flowlines(gdir):
-    """Extracts the flowlines from a glacier directory."""
-    return gdir.read_pickle("model_flowlines")
+def get_ds(gdir):
+    """Load the gridded dataset for a glacier directory."""
+    with xr.open_dataset(gdir.get_filepath("gridded_data")) as ds:
+        ds = ds.load()
+    return ds
+
+
+def find_gdir_index(gdirs, rgi_id):
+    """Find the index of a glacier directory given its RGI ID."""
+    for idx, gdir in enumerate(gdirs):
+        if gdir.rgi_id == rgi_id:
+            return idx
+    raise ValueError(f"RGI ID {rgi_id} not found in glacier directories.")
