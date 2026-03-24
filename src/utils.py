@@ -22,12 +22,14 @@ def get_oggm_version():
 # Lets go
 
 
-def setup_oggm_env(workspace_path="c", rgi_version="62", use_mp=True):
+def setup_oggm_env(
+    workspace_path="c", rgi_version="62", use_mp=True, folder_name="OGGM_data"
+):
     """
     Configure the global OGGM environment and working directory.
     Run this once at the start of your script.
     """
-    path_map = {"c": Path.cwd() / "OGGM_data", "p": Path.cwd().parent / "OGGM_data"}
+    path_map = {"c": Path.cwd() / folder_name, "p": Path.cwd().parent / folder_name}
     work_dir = path_map.get(workspace_path, Path(workspace_path))
     work_dir.mkdir(parents=True, exist_ok=True)
 
