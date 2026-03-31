@@ -17,7 +17,16 @@ setup(
         "folium==0.20.0",
         "shapely==2.1.2",
         "salem==0.3.11",
+        "scikit-learn",
+        "tables",
+        "rasterio"
     ],
+    extras_require={
+        "dev": [
+            "ipykernel",
+            "pytest",
+        ],
+    },
     package_dir={"": "src"},
     packages=find_packages(where="src"),
     include_package_data=True,
