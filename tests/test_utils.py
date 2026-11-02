@@ -1,4 +1,4 @@
-from src import utils
+from glaciexplo import utils
 import geopandas as gpd
 
 
