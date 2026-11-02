@@ -7,7 +7,7 @@ from glaciexplo.utils import get_ds
 
 def get_dem_slope(gdir):
     """
-    Get the slope of the DEM for a glacier.
+    Get the slope in degrees of the DEM for a glacier.
 
     Args:
         gdir: Glacier directory.
